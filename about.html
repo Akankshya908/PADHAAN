@@ -192,7 +192,91 @@
             .stats-grid {
                 grid-template-columns: 1fr;
             }
-        }
+            }
+            .content-image {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    position: relative;
+    z-index: 1;
+}
+/* Founder intro line */
+.founder-intro {
+    font-size: 1.6rem;
+    font-weight: 500;
+    margin: 1.5rem 0 1rem;
+    color: var(--dark);
+}
+
+/* Highlight name */
+.founder-intro span {
+    background: linear-gradient(135deg, var(--blue), var(--coral));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    font-weight: 700;
+}
+/* Founder highlight card */
+.founder-highlight {
+    background: linear-gradient(135deg, rgba(99,102,241,0.12), rgba(255,115,0,0.12));
+    padding: 1.5rem;
+    border-radius: 16px;
+    margin: 1.5rem 0;
+    border-left: 4px solid var(--blue);
+    transition: transform 0.3s ease;
+}
+
+.founder-highlight:hover {
+    transform: translateY(-3px);
+}
+
+/* "Hi I'm Manya" styling */
+.founder-highlight h3 {
+    font-size: 1.4rem;
+    margin-bottom: 0.5rem;
+    color: var(--dark);
+    font-weight: 600;
+}
+
+/* Paragraph inside highlight */
+.founder-highlight p {
+    margin: 0;
+    font-size: 1rem;
+    line-height: 1.6;
+}
+
+/* Glow effect */
+.content-image::before {
+    content: "";
+    position: absolute;
+    width: 320px;
+    height: 320px;
+    background: linear-gradient(135deg, var(--blue), var(--coral));
+    filter: blur(90px);
+    opacity: 0.5;
+    z-index: -1;
+}
+
+/* Founder image */
+.content-image img {
+    width: 100%;
+    max-width: 350px;
+    border-radius: 20px;
+    box-shadow: 0 25px 50px rgba(148, 65, 65, 0.2);
+    transition: transform 0.3s ease;
+    position: relative;
+    z-index: 2;
+}
+
+.content-image img:hover {
+    transform: scale(1.03);
+}
+
+/* Founder text background */
+.content-text {
+    background: linear-gradient(135deg, rgba(99,102,241,0.08), rgba(255,115,0,0.08));
+    padding: 2rem;
+    border-radius: 20px;
+}
     </style>
 </head>
 <body>
@@ -248,43 +332,43 @@
     </section>
 
     <!-- About Content -->
-    <section class="about-content">
-        <div class="container">
-            <div class="content-grid">
-                <div class="content-text">
-                    <h2>Making Scholarships Accessible to All</h2>
-                    <p>
-                        At Padhaan, we believe that every student deserves access to quality education, regardless of their financial background. 
-                        Our platform connects deserving students with scholarship opportunities that can transform their educational journey.
-                    </p>
-                    <p>
-                        Founded with the vision of bridging the gap between students and financial aid, we've helped thousands of students 
-                        discover and secure scholarships worth crores of rupees.
-                    </p>
-                </div>
-                <div class="content-image">
-                    <div class="stats-grid">
-                        <div class="stat-box" style="animation-delay: 0.1s;">
-                            <div class="number">500+</div>
-                            <div class="label">Scholarships Listed</div>
-                        </div>
-                        <div class="stat-box" style="animation-delay: 0.2s;">
-                            <div class="number">10K+</div>
-                            <div class="label">Students Helped</div>
-                        </div>
-                        <div class="stat-box" style="animation-delay: 0.3s;">
-                            <div class="number">₹50Cr+</div>
-                            <div class="label">Amount Awarded</div>
-                        </div>
-                        <div class="stat-box" style="animation-delay: 0.4s;">
-                            <div class="number">95%</div>
-                            <div class="label">Success Rate</div>
-                        </div>
-                    </div>
-                </div>
+<section class="about-content">
+    <div class="container">
+        <div class="content-grid">
+
+            <!-- LEFT SIDE (TEXT) -->
+         <div class="content-text">
+    <h2>Our Founder</h2>
+    
+    <p>
+        Our founder started Padhaan with a simple yet powerful vision — to make education accessible for every student, 
+        regardless of their financial background.
+    </p>
+
+    <!-- Stylish intro line -->
+    <p class="founder-intro">
+        Hi, I’m <span>Manya</span> 👋
+    </p>
+
+    <p>
+        I founded <strong>Padhaan</strong>, an initiative dedicated to helping students discover and access scholarships. 
+        I run workshops, collect resources, and am now building a platform to make scholarship information accessible to everyone.
+    </p>
+
+    <p>
+        Beyond Padhaan, I’m passionate about economics, psychology, and understanding how informal systems work in daily life. 
+        I explore these interests through photojournalism and small research projects, documenting stories that often go unnoticed.
+    </p>
+</div>
+            <!-- RIGHT SIDE (FOUNDER IMAGE) -->
+            <div class="content-image">
+                <img src="images/Padhan founder.jpeg" alt="Founder" 
+                     style="width: 100%; max-width: 350px; border-radius: 20px; box-shadow: 0 10px 30px rgba(0,0,0,0.1);">
             </div>
+
         </div>
-    </section>
+    </div>
+</section>
 
     <!-- Mission & Vision -->
     <section class="mission-vision">
