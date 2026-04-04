@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
-<<head> 
+<head> 
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
@@ -100,22 +100,22 @@
                             <span>Browse Scholarships</span>
                         </a>
                     </div>
-                    <div class="hero-stats">
-                        <div class="stat-item">
-                            <div class="stat-number">500+</div>
-                            <div class="stat-label">Scholarships</div>
-                        </div>
-                        <div class="stat-divider"></div>
-                        <div class="stat-item">
-                            <div class="stat-number">10,000+</div>
-                            <div class="stat-label">Students Helped</div>
-                        </div>
-                        <div class="stat-divider"></div>
-                        <div class="stat-item">
-                            <div class="stat-number">₹50Cr+</div>
-                            <div class="stat-label">Awarded</div>
-                        </div>
-                    </div>
+                   <div class="stats">
+  <div class="stat-item">
+    <h3>🚀 Pilot Phase</h3>
+    <p>Currently onboarding scholarships</p>
+  </div>
+
+  <div class="stat-item">
+    <h3>🎓 Early Access</h3>
+    <p>Helping first batch of students</p>
+  </div>
+
+  <div class="stat-item">
+    <h3>📢 Coming Soon</h3>
+    <p>More opportunities launching shortly</p>
+  </div>
+</div>
                 </div>
                 <div class="hero-image">
                     <div class="hero-illustration">
@@ -403,6 +403,19 @@
                             </select>
                         </div>
                     </div>
+                    <div class="form-note">
+  <p>
+    After submitting this form, our team will review your details and match you with relevant scholarships. 
+    We may contact you via email or phone with personalized opportunities.
+  </p>
+</div>
+
+<div class="form-consent">
+  <input type="checkbox" id="consent" required>
+  <label for="consent">
+    I agree to be contacted by Padhaan regarding scholarship opportunities and accept the privacy policy.>
+  </label>
+</div>
 
                     <button type="submit" class="btn-submit">
                         <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
@@ -428,73 +441,43 @@
             <div id="results-container" class="results-grid"></div>
         </div>
     </section>
+<section class="how-it-works">
+  <div class="container">
+    <div class="section-header">
+      <span class="section-badge badge-blue">How It Works</span>
+      <h2 class="section-title">Simple Steps to Find Your Scholarship</h2>
+      <p class="section-description">
+        Our process ensures you get verified and relevant scholarship opportunities
+      </p>
+    </div>
 
-    <!-- Testimonials -->
-    <section class="testimonials">
-        <div class="container">
-            <div class="section-header">
-                <span class="section-badge badge-blue">Success Stories</span>
-                <h2 class="section-title">What Students Say About Us</h2>
-                <p class="section-description">
-                    Join thousands of students who found their perfect scholarship through Padhaan
-                </p>
-            </div>
+    <div class="steps-grid">
+      <div class="step-card">
+        <div class="step-icon">🏫</div>
+        <h3>School-Based Identification</h3>
+        <p>
+          We collaborate with schools to identify eligible students based on academic and financial background.
+        </p>
+      </div>
 
-            <div class="testimonials-grid">
-                <div class="testimonial-card">
-                    <div class="testimonial-stars">
-                        ⭐⭐⭐⭐⭐
-                    </div>
-                    <p class="testimonial-text">
-                        "Padhaan made finding scholarships so easy! I got matched with 5 scholarships 
-                        I didn't even know existed. The platform is super user-friendly."
-                    </p>
-                    <div class="testimonial-author">
-                        <div class="author-avatar">A</div>
-                        <div class="author-info">
-                            <div class="author-name">Aarav Sharma</div>
-                            <div class="author-title">Engineering Student</div>
-                        </div>
-                    </div>
-                </div>
+      <div class="step-card">
+        <div class="step-icon">✅</div>
+        <h3>Verified Scholarships</h3>
+        <p>
+          Our team curates and verifies genuine scholarships so you only apply to trusted opportunities.
+        </p>
+      </div>
 
-                <div class="testimonial-card">
-                    <div class="testimonial-stars">
-                        ⭐⭐⭐⭐⭐
-                    </div>
-                    <p class="testimonial-text">
-                        "Thanks to Padhaan, I secured a ₹2 lakh scholarship for my MBA. 
-                        The document checklist and deadline reminders were incredibly helpful!"
-                    </p>
-                    <div class="testimonial-author">
-                        <div class="author-avatar">P</div>
-                        <div class="author-info">
-                            <div class="author-name">Priya Patel</div>
-                            <div class="author-title">MBA Student</div>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="testimonial-card">
-                    <div class="testimonial-stars">
-                        ⭐⭐⭐⭐⭐
-                    </div>
-                    <p class="testimonial-text">
-                        "The best scholarship platform in India! I found merit-based scholarships 
-                        I qualified for. The support team is also very responsive."
-                    </p>
-                    <div class="testimonial-author">
-                        <div class="author-avatar">R</div>
-                        <div class="author-info">
-                            <div class="author-name">Rahul Kumar</div>
-                            <div class="author-title">Medical Student</div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </section>
-
+      <div class="step-card">
+        <div class="step-icon">📄</div>
+        <h3>Application Guidance</h3>
+        <p>
+          Get step-by-step help with applications, documentation, and deadlines to maximize your chances.
+        </p>
+      </div>
+    </div>
+  </div>
+</section>
     <!-- CTA Section -->
     <section class="cta-section">
         <div class="container">
@@ -558,8 +541,8 @@
 
                     <div class="footer-column">
                         <h4 class="footer-title">Legal</h4>
-                        <a href="#" class="footer-link">Privacy Policy</a>
-                        <a href="#" class="footer-link">Terms of Service</a>
+                        <a href="privacy.html" class="footer-link">Privacy Policy</a>
+                        <a href="terms.html" class="footer-link">Terms of Service</a>
                         <a href="#" class="footer-link">Cookie Policy</a>
                     </div>
                 </div>
