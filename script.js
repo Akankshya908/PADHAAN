@@ -313,11 +313,16 @@ function showScholarshipDetails(scholarshipId) {
 // Apply for Scholarship
 function applyForScholarship(scholarshipId) {
     const scholarship = scholarships.find(s => s.id === scholarshipId);
-    alert(`Application process for "${scholarship.name}" will open in a new window.\n\nPlease ensure you have all required documents ready before proceeding.`);
-    
+
+    if (scholarship && scholarship.link) {
+        window.open(scholarship.link, '_blank');
+    } else {
+        alert("Application link not available.");
+    }
+}
     // In a real application, this would redirect to the application form
     // window.open(scholarship.applicationUrl, '_blank');
-}
+
 
 // Display All Scholarships (for scholarships page)
 function displayAllScholarships() {

@@ -12,6 +12,7 @@ const scholarships = [
         percentage: 85,
         income: "0-600000",
         category: ["general", "obc", "sc", "st"],
+        link: "https://scholarships.gov.in",
         documents: [
             "10th and 12th Mark Sheets",
             "Income Certificate",
@@ -32,6 +33,7 @@ const scholarships = [
         percentage: 60,
         income: "0-300000",
         category: ["sc", "st"],
+        link: "https://scholarships.gov.in",
         documents: [
             "Caste Certificate",
             "Income Certificate (below ₹3 Lakhs)",
