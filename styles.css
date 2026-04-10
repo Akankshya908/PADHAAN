@@ -1322,7 +1322,7 @@ body {
 .social-link:hover {
     background: var(--coral);
     transform: translateY(-3px);
-}t
+}
 
 /* ========================================
    Scholarships Page
@@ -1820,4 +1820,46 @@ body {
     .form-container {
         padding: 1.5rem;
     }
+    .filter-buttons {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 25px;
+    flex-wrap: wrap;
+}
+}
+.filter-buttons {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+    justify-content: center;
+    margin-bottom: 2rem;
+}
+
+.filter-buttons button {
+    padding: 10px 20px;
+    border-radius: 999px;
+    border: none;
+
+    background: #f1f5f9;
+    color: #333;
+
+    font-weight: 500;
+    cursor: pointer;
+
+    transition: all 0.3s ease;
+    letter-spacing: 0.3px;
+}
+
+/* Hover */
+.filter-buttons button:hover {
+    background: linear-gradient(135deg, var(--coral), var(--blue));
+    color: white;
+    transform: translateY(-2px);
+}
+
+/* Active */
+.filter-buttons button.active {
+    background: linear-gradient(135deg, var(--coral), var(--blue));
+    color: white;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.15);
 }

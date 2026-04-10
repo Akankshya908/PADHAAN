@@ -148,6 +148,7 @@
                     <a href="scholarships.html" class="nav-link">Scholarships</a>
                     <a href="about.html" class="nav-link">About</a>
                     <a href="contact.html" class="nav-link active">Contact</a>
+                    <a href="faq.html" class="nav-link">FAQs</a>
                     <a href="school-partner.html" class="nav-link">School Partnership</a>
                     <a href="index.html#scholarship-form" class="btn-primary">Find Scholarships</a>
                 </div>
@@ -163,6 +164,7 @@
                 <a href="scholarships.html" class="mobile-nav-link">Scholarships</a>
                 <a href="about.html" class="mobile-nav-link">About</a>
                 <a href="contact.html" class="mobile-nav-link">Contact</a>
+                <a href="faq.html" class="mobile-nav-link">FAQs</a>
                 <a href="school-partner.html" class="mobile-nav-link">School Partnership</a>
                 <a href="index.html#scholarship-form" class="btn-primary">Find Scholarships</a>
             </div>
@@ -225,7 +227,7 @@
                         </div>
                         <div class="contact-details">
                             <h3>Office</h3>
-                            <p>New Delhi, India</p>
+                            <p>Gujarat, India</p>
                         </div>
                     </div>
                     
@@ -255,7 +257,7 @@
                             ✓ Thank you! Your message has been sent successfully.
                         </div>
                         
-                        <form id="contactForm" onsubmit="handleContactSubmit(event)">
+                        <form id="contactForm">
                             <div class="form-row">
                                 <div class="form-group">
                                     <label for="name">Full Name</label>
@@ -329,16 +331,14 @@
                     <div class="footer-column">
                         <h4 class="footer-title">Resources</h4>
                         <a href="#" class="footer-link">How It Works</a>
-                        <a href="#" class="footer-link">FAQs</a>
-                        <a href="#" class="footer-link">Blog</a>
-                        <a href="#" class="footer-link">Support</a>
+                        <a href="faq.html" class="footer-link">FAQs</a>
+                       
                     </div>
 
                     <div class="footer-column">
                         <h4 class="footer-title">Legal</h4>
                         <a href="privacy.html" class="footer-link">Privacy Policy</a>
                         <a href="terms.html" class="footer-link">Terms of Service</a>
-                        <a href="#" class="footer-link">Cookie Policy</a>
                     </div>
                 </div>
             </div>
@@ -365,43 +365,54 @@
             </div>
         </div>
     </footer>
+ <script>
+    document.addEventListener('DOMContentLoaded', () => {
+        const form = document.getElementById('contactForm');
+        const successMessage = document.getElementById('success-message');
 
-    <script src="data.js"></script>
-    <script src="script.js"></script>
-    <script>
-        function handleContactSubmit(event) {
-            event.preventDefault();
-            
-            const form = event.target;
+        form.addEventListener('submit', async (event) => {
+            event.preventDefault(); // Prevent page refresh
+
             const submitBtn = form.querySelector('button[type="submit"]');
-            const successMessage = document.getElementById('success-message');
-            
-            // Show loading state
-            const originalContent = submitBtn.innerHTML;
             submitBtn.disabled = true;
-            submitBtn.innerHTML = '<div class="spinner"></div><span>Sending...</span>';
-            
-            // Simulate sending
-            setTimeout(() => {
-                // Show success message
-                successMessage.style.display = 'block';
-                
-                // Reset form
-                form.reset();
-                
-                // Reset button
+            submitBtn.innerText = 'Sending...';
+
+            const formData = {
+                name: document.getElementById('name').value.trim(),
+                email: document.getElementById('email').value.trim(),
+                subject: document.getElementById('subject').value.trim(),
+                message: document.getElementById('message').value.trim()
+            };
+
+            try {
+                const response = await fetch('http://127.0.0.1:5000/contact', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(formData)
+                });
+
+                const data = await response.json();
+
+                if (data.success) {
+                    successMessage.style.display = 'block';
+                    successMessage.innerText = '✓ Your message has been sent successfully!';
+                    form.reset();
+                    setTimeout(() => { successMessage.style.display = 'none'; }, 5000);
+                } else {
+                    alert("Server error: " + (data.error || "Unknown error"));
+                }
+            } catch (err) {
+                console.error("Network error:", err);
+                alert("Network error! Is your server running?");
+            } finally {
                 submitBtn.disabled = false;
-                submitBtn.innerHTML = originalContent;
-                
-                // Hide success message after 5 seconds
-                setTimeout(() => {
-                    successMessage.style.display = 'none';
-                }, 5000);
-                
-                // Scroll to success message
-                successMessage.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
-            }, 1500);
-        }
+                submitBtn.innerText = 'Send Message';
+            }
+        });
+    });
     </script>
 </body>
 </html>
+    
+    <script src="data.js"></script>
+    <script src="script.js"></script>

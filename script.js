@@ -384,3 +384,63 @@ document.querySelectorAll('a[href^="#"]').forEach(anchor => {
         }
     });
 });
+function filterScholarships(type, btn) {
+    console.log("Clicked:", type);
+
+    // Active button change
+    const buttons = document.querySelectorAll('.filter-buttons button');
+    buttons.forEach(button => button.classList.remove('active'));
+    btn.classList.add('active');
+
+    // Filtering (FIXED)
+    const filtered = type === 'all'
+        ? scholarships
+        : scholarships.filter(s => s.group && s.group.includes(type));
+
+    console.log(filtered);
+
+    displayScholarships(filtered);
+}
+function displayScholarships(data) {
+    const container = document.getElementById('all-scholarships-container');
+    container.innerHTML = ''; // clear old data
+
+    if (data.length === 0) {
+        container.innerHTML = "<p>No scholarships found</p>";
+        return;
+    }
+
+    data.forEach((scholarship, index) => {
+        const card = createScholarshipCard(scholarship, index);
+        container.appendChild(card);
+    });
+}
+function handleContactSubmit(event) {
+    event.preventDefault();
+
+    const formData = new FormData(event.target);
+
+    const data = {
+        name: formData.get('name'),
+        email: formData.get('email'),
+        subject: formData.get('subject'),
+        message: formData.get('message')
+    };
+
+    fetch('http://localhost:5000/contact', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(data)
+    })
+    .then(res => res.json())
+    .then(() => {
+        document.getElementById('success-message').style.display = 'block';
+        event.target.reset();
+    })
+    .catch(err => {
+        alert("Error sending message");
+        console.log(err);
+    });
+}

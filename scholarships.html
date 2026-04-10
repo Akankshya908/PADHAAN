@@ -28,6 +28,7 @@
                     <a href="scholarships.html" class="nav-link active">Scholarships</a>
                     <a href="about.html" class="nav-link">About</a>
                     <a href="contact.html" class="nav-link">Contact</a>
+                    <a href="faq.html" class="nav-link">FAQs</a>
                     <a href="school-partner.html" class="nav-link">School Partnership</a>
                     <a href="index.html#scholarship-form" class="btn-primary">Find Scholarships</a>
                 </div>
@@ -43,6 +44,7 @@
                 <a href="scholarships.html" class="mobile-nav-link">Scholarships</a>
                 <a href="about.html" class="mobile-nav-link">About</a>
                 <a href="contact.html" class="mobile-nav-link">Contact</a>
+                <a href="faq.html" class="mobile-nav-link">FAQs</a>
                 <a href="school-partner.html" class="mobile-nav-link">School Partnership</a>
                 <a href="index.html#scholarship-form" class="btn-primary">Find Scholarships</a>
             </div>
@@ -63,6 +65,21 @@
     <!-- Scholarships List -->
     <section class="scholarships-section">
         <div class="container">
+            <div class="container">
+
+    <!-- ✅ FILTER BUTTONS -->
+   <div class="filter-buttons">
+    <button onclick="filterScholarships('all', this)" class="active">All</button>
+    <button onclick="filterScholarships('school', this)">School</button>
+    <button onclick="filterScholarships('class11-12', this)">Class 11-12</button>
+    <button onclick="filterScholarships('college', this)">College</button>
+    <button onclick="filterScholarships('private', this)">Private</button>
+    <button onclick="filterScholarships('state', this)">State</button>
+</div>
+    <!-- Scholarships -->
+    <div id="all-scholarships-container" class="scholarships-grid"></div>
+
+</div>
             <div id="all-scholarships-container" class="scholarships-grid"></div>
         </div>
     </section>
@@ -97,16 +114,14 @@
                     <div class="footer-column">
                         <h4 class="footer-title">Resources</h4>
                         <a href="#" class="footer-link">How It Works</a>
-                        <a href="#" class="footer-link">FAQs</a>
-                        <a href="#" class="footer-link">Blog</a>
-                        <a href="#" class="footer-link">Support</a>
+                        <a href="faq.html" class="footer-link">FAQs</a>
                     </div>
 
                     <div class="footer-column">
                         <h4 class="footer-title">Legal</h4>
                         <a href="privacy.html" class="footer-link">Privacy Policy</a>
                         <a href="terms.html" class="footer-link">Terms of Service</a>
-                        <a href="#" class="footer-link">Cookie Policy</a>
+                       
                     </div>
                 </div>
             </div>

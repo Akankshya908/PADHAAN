@@ -1,0 +1,543 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Padhaan - Admin Dashboard</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * { box-sizing: border-box; margin:0; padding:0; font-family:'Poppins', sans-serif; }
+        body { background:#f4f7f6; }
+        
+        .nav-link.active {
+    background: rgba(255,255,255,0.2);
+               }
+        /* Sidebar */
+        .sidebar { position: fixed; top:0; left:0; width:220px; height:100%; background: linear-gradient(180deg, #673AB7, #512DA8); color:#fff; padding-top:30px; display:flex; flex-direction:column; gap:20px; }
+        .sidebar h2 { text-align:center; margin-bottom:20px; font-size:1.5rem; }
+        .sidebar a { color:white; text-decoration:none; padding:10px 20px; display:block; border-radius:8px; transition:0.3s; }
+        .sidebar a:hover { background: rgba(255,255,255,0.1); }
+        
+        .main-content { margin-left:240px; padding:20px; }
+
+        /* Header */
+        .header { background: linear-gradient(135deg,#FFC107 0%,#673AB7 100%); color:white; padding:20px; border-radius:10px; text-align:center; margin-bottom:20px; }
+
+        /* Stats Cards */
+        .stats-cards { display:flex; gap:20px; margin-bottom:20px; flex-wrap:wrap; }
+        .card { flex:1; min-width:150px; padding:20px; border-radius:12px; color:white; font-weight:600; box-shadow:0 8px 20px rgba(0,0,0,0.1);}
+        .card.inquiries { background:linear-gradient(135deg,#FFC107 0%,#673AB7 100%); }
+        .card.pending { background:linear-gradient(135deg,#FFC107 0%,#673AB7 100%); }
+        .card.resolved { background:linear-gradient(135deg,#FFC107 0%,#673AB7 100%)#4CAF50; }
+
+        /* Table */
+        .container { background:white; padding:20px; border-radius:12px; box-shadow:0 10px 25px rgba(0,0,0,0.1);}
+        table { width:100%; border-collapse:collapse; margin-top:20px; }
+        th { background:#f8f9fa; color:#555; text-align:left; padding:15px; border-bottom:2px solid #eee; }
+        td { padding:15px; border-bottom:1px solid #eee; color:#333; }
+        tr:hover { background:#fdfcf0; }
+        .status-badge { padding:4px 10px; border-radius:12px; color:white; font-size:0.85rem; font-weight:600; }
+        .status-badge.pending { background:#FFB300; }
+        .status-badge.resolved { background:#4CAF50; }
+        .action-btn { background:none; border:none; cursor:pointer; font-size:1rem; margin-right:5px; }
+
+        .refresh-btn { background:#673AB7; color:white; border:none; padding:10px 20px; border-radius:5px; cursor:pointer; float:right; margin-bottom:10px; }
+
+        @media(max-width:768px){ .main-content{margin-left:0;} .stats-cards{flex-direction:column;} }
+
+        /* Reply Modal */
+        .modal { display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.5); justify-content:center; align-items:center; z-index:1000; }
+        .modal-content { background:white; padding:20px; border-radius:12px; width:90%; max-width:400px; position:relative; }
+        .modal-content h3 { margin-bottom:15px; }
+        .modal-content textarea { width:100%; height:100px; padding:10px; border-radius:8px; border:1px solid #ccc; resize:none; margin-bottom:15px; }
+        .modal-content button { background:#673AB7; color:white; border:none; padding:10px 15px; border-radius:8px; cursor:pointer; }
+        .modal-close { position:absolute; top:10px; right:15px; font-size:1.2rem; cursor:pointer; }
+
+        @media(max-width:768px){
+
+    #menuToggle{
+        display:block;
+    }
+
+    .sidebar{
+        position: fixed;
+        top:0;
+        left:0;
+        width:220px;
+        height:100%;
+        transform: translateX(-100%);
+        z-index:1000;
+        transition: transform 0.3s ease;
+    }
+
+    .sidebar.active{
+        transform: translateX(0);
+    }
+
+    .main-content{
+        margin-left:0;
+    }
+
+    .stats-cards{
+        flex-direction: column;
+    }
+}
+    </style>
+</head>
+<body>
+<script>
+
+</script>
+
+<div class="sidebar">
+    <h2>Padhaan Admin</h2>
+   <a href="#" class="nav-link" onclick="setActiveTab(this); showDashboard()">Dashboard</a>
+    <div>
+   <a href="#" class="nav-link" onclick="setActiveTab(this); showApplicationsPanel()">Applications</a>
+    <div id="applicationsMenu" style="display:none; padding-left:20px; margin-top:8px;">
+       <a href="#" onclick="loadPage('index.html')">Home</a>
+       <a href="#" onclick="loadPage('about.html')">About</a>
+       <a href="#" onclick="loadPage('contact.html')">Contact</a>
+    </div>
+</div>
+    <a href="#" class="nav-link" onclick="setActiveTab(this); showUsersPanel()">Users</a>
+<a href="#" class="nav-link" onclick="setActiveTab(this); showSettingsPanel()">Settings</a>
+    <a href="#" onclick="logoutAdmin()">Logout</a>
+</div>
+<button id="menuToggle" onclick="toggleSidebar()" style="
+    display:none;
+    background:#673AB7;
+    color:white;
+    border:none;
+    padding:10px 15px;
+    border-radius:8px;
+    cursor:pointer;
+    margin-bottom:10px;
+">
+☰ Menu
+</button>
+<div class="main-content">
+    <div id="mainContentArea">
+        <div class="header">
+            <h1>Padhaan Admin Dashboard</h1>
+            <p>Manage your scholarship inquiries</p>
+        </div>
+
+        <div class="stats-cards">
+            <div class="card inquiries">Total Inquiries: 0</div>
+            <div class="card pending">Pending Tasks: 0</div>
+            <div class="card resolved">Resolved: 0</div>
+        </div>
+
+        <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:10px; margin-bottom:15px;">
+            <input type="text" id="searchInput" placeholder="Search by Name or Email" style="padding:10px; border-radius:8px; border:1px solid #ccc; flex:1;">
+            <select id="statusFilter" style="padding:10px; border-radius:8px; border:1px solid #ccc;">
+                <option value="">All Status</option>
+                <option value="Pending">Pending</option>
+                <option value="Resolved">Resolved</option>
+            </select>
+            <button id="exportBtn" style="padding:10px 15px; border-radius:8px; border:none; background:#673AB7; color:white; cursor:pointer;">Export CSV</button>
+        </div>
+
+        <button class="refresh-btn" onclick="loadMessages()">🔄 Refresh Data</button>
+
+        <div style="overflow-x:auto;">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Name</th>
+                        <th>Email</th>
+                        <th>Subject</th>
+                        <th>Message</th>
+                        <th>Status</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody id="messageList"></tbody>
+            </table>
+        </div>
+
+        <div style="margin-top:10px; display:flex; justify-content:center; gap:10px;">
+            <button id="prevPage" style="padding:8px 12px; border-radius:5px; border:1px solid #ccc; cursor:pointer;">Previous</button>
+            <span id="pageInfo"></span>
+            <button id="nextPage" style="padding:8px 12px; border-radius:5px; border:1px solid #ccc; cursor:pointer;">Next</button>
+        </div>
+    </div>
+</div>
+
+<!-- Reply Modal -->
+<div class="modal" id="replyModal">
+    <div class="modal-content">
+        <span class="modal-close" onclick="closeModal()">&times;</span>
+        <h3>Reply to <span id="replyEmail"></span></h3>
+        <textarea id="replyMessage" placeholder="Type your reply here..."></textarea>
+        <button type="button" onclick="sendReply()">Send</button>
+    </div>
+</div>
+<script>
+     const adminToken = localStorage.getItem("adminToken");
+
+if (!adminToken) {
+    alert("Please login again");
+    window.location.href = "admin-login.html";
+}
+let messagesData = [];
+let currentPage = 1;
+const rowsPerPage = 5;
+let currentReplyEmail = "";
+let defaultDashboardHTML = "";
+// Load messages
+async function loadMessages(){
+    const tbody = document.getElementById('messageList');
+    tbody.innerHTML = "<tr><td colspan='6'>Loading messages...</td></tr>";
+
+    try{
+        const response = await fetch('http://localhost:5000/admin/messages', {
+            headers: {
+                'Authorization': `Bearer ${adminToken}`
+            }
+        });
+
+        const data = await response.json();
+
+        if (!response.ok) {
+            tbody.innerHTML = `<tr><td colspan='6' style='color:red;'>${data.error || 'Error fetching data!'}</td></tr>`;
+            return;
+        }
+
+        messagesData = data.map(msg => ({ ...msg, status: msg.status || "Pending" }));
+        renderTable();
+        updateStats();
+    }catch(err){
+        tbody.innerHTML = "<tr><td colspan='6' style='color:red;'>Error fetching data!</td></tr>";
+        console.log(err);
+    }
+}
+
+/* Modal Handling */
+function replyMessage(email){
+    document.getElementById('replyEmail').innerText = email;
+    document.getElementById('replyMessage').value = '';
+    document.getElementById('replyModal').style.display = 'block';
+}
+
+function closeModal(){
+    document.getElementById('replyModal').style.display = 'none';
+}
+
+/* Send reply to backend */
+async function sendReply(){
+    const msg = document.getElementById('replyMessage').value.trim();
+
+    if(!msg){
+        alert("Please type a message.");
+        return;
+    }
+
+    try{
+        const res = await fetch('http://localhost:5000/admin/reply',{
+            method:'POST',
+            headers:{
+                'Content-Type':'application/json',
+                'Authorization': `Bearer ${adminToken}`
+            },
+            body: JSON.stringify({
+                to: currentReplyEmail,
+                subject: "Reply from Padhaan",
+                message: msg,
+                id: currentMessageId
+            })
+        });
+
+        if(res.ok){
+            alert(`Reply sent to ${currentReplyEmail}`);
+            closeModal();
+        } else {
+            const data = await res.json();
+            alert("Failed: " + (data.error || "Unknown error"));
+        }
+
+    }catch(err){
+        alert("Error sending reply.");
+    }
+}
+
+/* Close modal on outside click */
+window.onclick = function(event){
+    const modal = document.getElementById('replyModal');
+    if(event.target === modal){
+        closeModal();
+    }
+}
+
+// Render table
+function renderTable(){
+    const tbody=document.getElementById('messageList');
+    const query=document.getElementById('searchInput').value.toLowerCase();
+    const statusFilter=document.getElementById('statusFilter').value;
+    let filtered=messagesData.filter(msg=>
+        (msg.name.toLowerCase().includes(query)||msg.email.toLowerCase().includes(query)) &&
+        (statusFilter===""||msg.status===statusFilter)
+    );
+    const totalPages=Math.ceil(filtered.length/rowsPerPage);
+    if(currentPage>totalPages) currentPage=totalPages||1;
+    const start=(currentPage-1)*rowsPerPage;
+    const pageData=filtered.slice(start,start+rowsPerPage);
+
+    if(pageData.length===0){
+        tbody.innerHTML="<tr><td colspan='6'>No messages found.</td></tr>";
+    }else{
+        tbody.innerHTML=pageData.map(msg=>`
+            <tr>
+                <td><strong>${msg.name}</strong></td>
+                <td>${msg.email}</td>
+                <td>${msg.subject}</td>
+                <td>${msg.message}</td>
+                <td><span class="status-badge ${msg.status.toLowerCase()}">${msg.status}</span></td>
+                <td>
+                    <button class="action-btn" title="Reply" onclick="openReplyModal('${msg.email}', '${msg._id}')"><i class="fas fa-reply-all"></i></button>
+                    <button class="action-btn" title="Delete" onclick="deleteMessage('${msg._id}')"><i class="fas fa-trash"></i></button>
+                </td>
+            </tr>
+        `).join('');
+    }
+    document.getElementById('pageInfo').innerText=`Page ${currentPage} of ${totalPages||1}`;
+}
+
+// Update stats
+function updateStats(){
+    document.querySelector('.card.inquiries').innerText=`Total Inquiries: ${messagesData.length}`;
+    document.querySelector('.card.pending').innerText=`Pending Tasks: ${messagesData.filter(m=>m.status==="Pending").length}`;
+    document.querySelector('.card.resolved').innerText=`Resolved: ${messagesData.filter(m=>m.status==="Resolved").length}`;
+}
+
+// Search & Filter
+document.getElementById('searchInput').addEventListener('input',()=>{ currentPage=1; renderTable(); });
+document.getElementById('statusFilter').addEventListener('change',()=>{ currentPage=1; renderTable(); });
+
+// Pagination
+document.getElementById('prevPage').addEventListener('click',()=>{ if(currentPage>1){ currentPage--; renderTable(); }});
+document.getElementById('nextPage').addEventListener('click',()=>{
+    const query=document.getElementById('searchInput').value.toLowerCase();
+    const statusFilter=document.getElementById('statusFilter').value;
+    const filtered=messagesData.filter(msg=>(msg.name.toLowerCase().includes(query)||msg.email.toLowerCase().includes(query))&&(statusFilter===""||msg.status===statusFilter));
+    const totalPages=Math.ceil(filtered.length/rowsPerPage);
+    if(currentPage<totalPages){ currentPage++; renderTable(); }
+});
+
+// Export CSV
+document.getElementById('exportBtn').addEventListener('click',()=>{
+    const rows=[["Name","Email","Subject","Message","Status"]];
+    messagesData.forEach(msg=>rows.push([msg.name,msg.email,msg.subject,msg.message,msg.status]));
+    const csvContent="data:text/csv;charset=utf-8,"+rows.map(e=>e.join(",")).join("\n");
+    const encodedUri=encodeURI(csvContent);
+    const link=document.createElement("a");
+    link.setAttribute("href",encodedUri);
+    link.setAttribute("download","padhaan_messages.csv");
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+});
+
+// Reply modal
+let currentMessageId = "";
+
+function openReplyModal(email, id){
+    currentReplyEmail = email;
+    currentMessageId = id;
+    document.getElementById('replyEmail').innerText = email;
+    document.getElementById('replyMessage').value = "";
+    document.getElementById('replyModal').style.display = "flex";
+}
+function closeModal(){ document.getElementById('replyModal').style.display="none"; }
+
+
+// Deletemessage
+async function deleteMessage(id){
+    if(confirm("Are you sure you want to delete this message?")){
+        try{
+            const res = await fetch(`http://localhost:5000/admin/messages/${id}`, {
+                method: 'DELETE',
+                headers: {
+                    'Authorization': `Bearer ${adminToken}`
+                }
+            });
+
+            if(res.ok){
+                messagesData = messagesData.filter(m => m._id !== id);
+                renderTable();
+                updateStats();
+                alert("Message deleted.");
+            } else {
+                alert("Failed to delete message.");
+            }
+        }catch(err){
+            alert("Error deleting message.");
+        }
+    }
+}
+
+window.onload = function () {
+    defaultDashboardHTML = document.getElementById("mainContentArea").innerHTML;
+    loadMessages();
+};
+function showDashboard() {
+    document.getElementById("mainContentArea").innerHTML = defaultDashboardHTML;
+    attachDashboardEvents();
+    loadMessages();
+}
+function attachDashboardEvents() {
+    document.getElementById('searchInput').addEventListener('input', () => { currentPage = 1; renderTable(); });
+    document.getElementById('statusFilter').addEventListener('change', () => { currentPage = 1; renderTable(); });
+    document.getElementById('prevPage').addEventListener('click', () => { if(currentPage > 1){ currentPage--; renderTable(); }});
+    document.getElementById('nextPage').addEventListener('click', () => {
+        const query = document.getElementById('searchInput').value.toLowerCase();
+        const statusFilter = document.getElementById('statusFilter').value;
+        const filtered = messagesData.filter(msg =>
+            (msg.name.toLowerCase().includes(query) || msg.email.toLowerCase().includes(query)) &&
+            (statusFilter === "" || msg.status === statusFilter)
+        );
+        const totalPages = Math.ceil(filtered.length / rowsPerPage);
+        if(currentPage < totalPages){ currentPage++; renderTable(); }
+    });
+
+    document.getElementById('exportBtn').addEventListener('click', () => {
+        const rows = [["Name","Email","Subject","Message","Status"]];
+        messagesData.forEach(msg => rows.push([msg.name,msg.email,msg.subject,msg.message,msg.status]));
+        const csvContent = "data:text/csv;charset=utf-8," + rows.map(e => e.join(",")).join("\n");
+        const encodedUri = encodeURI(csvContent);
+        const link = document.createElement("a");
+        link.setAttribute("href", encodedUri);
+        link.setAttribute("download", "padhaan_messages.csv");
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+    });
+}
+function showUsersPanel() {
+    document.getElementById("mainContentArea").innerHTML = `
+        <div class="header">
+            <h1>Users</h1>
+            <p>Admin access overview</p>
+        </div>
+
+        <div class="stats-cards">
+            <div class="card inquiries">Total Admin Access: 1</div>
+            <div class="card pending">Active Right Now: 1</div>
+            <div class="card resolved">Roles: Super Admin</div>
+        </div>
+
+        <div class="container" style="margin-top:20px;">
+            <h3 style="margin-bottom:15px;">Who can access this dashboard?</h3>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Name</th>
+                        <th>Role</th>
+                        <th>Access</th>
+                        <th>Status</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>Admin</td>
+                        <td>Super Admin</td>
+                        <td>Full Access</td>
+                        <td>Active</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    `;
+}
+function showSettingsPanel() {
+    document.getElementById("mainContentArea").innerHTML = `
+        <div class="header">
+            <h1>Settings</h1>
+            <p>Basic website and admin settings</p>
+        </div>
+
+        <div class="stats-cards">
+            <div class="card inquiries">Website Status: Live</div>
+            <div class="card pending">Admin Mode: Secure</div>
+            <div class="card resolved">Email Service: Active</div>
+        </div>
+
+        <div class="container" style="margin-top:20px;">
+            <h3 style="margin-bottom:15px;">Current Settings</h3>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Setting</th>
+                        <th>Value</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>Website Name</td>
+                        <td>Padhaan</td>
+                    </tr>
+                    <tr>
+                        <td>Admin Access</td>
+                        <td>JWT Protected</td>
+                    </tr>
+                    <tr>
+                        <td>Contact Form</td>
+                        <td>Connected</td>
+                    </tr>
+                    <tr>
+                        <td>Email Replies</td>
+                        <td>Working</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    `;
+}
+function logoutAdmin() {
+    localStorage.removeItem("adminToken");
+    window.location.href = "admin-login.html";
+}
+function setActiveTab(element) {
+    document.querySelectorAll(".nav-link").forEach(link => {
+        link.classList.remove("active");
+    });
+    element.classList.add("active");
+}
+function toggleApplicationsMenu() {
+    const menu = document.getElementById("applicationsMenu");
+    menu.style.display = menu.style.display === "none" ? "block" : "none";
+}
+function showApplicationsPanel() {
+    document.getElementById("mainContentArea").innerHTML = `
+        <div class="header">
+            <h1>Applications</h1>
+            <p>Manage website sections from one place</p>
+        </div>
+
+        <div class="stats-cards">
+            <div class="card inquiries" onclick="window.open('index.html','_blank')" style="cursor:pointer;">Home Page</div>
+            <div class="card pending" onclick="window.open('about.html','_blank')" style="cursor:pointer;">About Page</div>
+            <div class="card resolved" onclick="window.open('contact.html','_blank')" style="cursor:pointer;">Contact Page</div>
+        </div>
+
+        <div class="container" style="margin-top:20px;">
+            <h3 style="margin-bottom:15px;">Suggested sections for now</h3>
+            <p style="margin-bottom:10px;"><strong>Home:</strong> Hero section, scholarships highlight, CTA buttons</p>
+            <p style="margin-bottom:10px;"><strong>About:</strong> Mission, vision, why Padhaan</p>
+            <p style="margin-bottom:10px;"><strong>Contact:</strong> Form submissions and support details</p>
+            
+        </div>
+    `;
+}
+function toggleSidebar(){
+    document.querySelector(".sidebar").classList.toggle("active");
+    document.querySelectorAll(".nav-link").forEach(link=>{
+    link.addEventListener("click", ()=>{
+        document.querySelector(".sidebar").classList.remove("active");
+    });
+});
+}
+</script>
+</body>
+</html>
