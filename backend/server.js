@@ -1,3 +1,4 @@
+const path = require('path');
 require('dotenv').config();
 
 const express = require('express');
@@ -5,7 +6,9 @@ const jwt = require('jsonwebtoken');
 const mongoose = require('mongoose');
 const cors = require('cors');
 const nodemailer = require('nodemailer');
-const path = require('path');
+
+const Admin = require('./models/admin.js');
+
 const app = express();
 
 // Middleware
@@ -14,12 +17,25 @@ app.use(cors({
     methods: ['GET', 'POST', 'DELETE'],
     allowedHeaders: ['Content-Type', 'Authorization']
 }));
+
 app.use(express.json());
-app.use(express.static(path.join(__dirname, '../')));
+app.use(express.static(path.join(__dirname, '../frontend')));
+
 // MongoDB connect
 mongoose.connect(process.env.MONGO_URI || 'mongodb://127.0.0.1:27017/padhaanDB')
 .then(() => console.log("MongoDB Connected"))
 .catch(err => console.log(err));
+
+// ✅ Create default admin
+async function createDefaultAdmin() {
+    const existing = await Admin.findOne();
+
+    if (!existing) {
+        await Admin.create({ password: process.env.ADMIN_PASSWORD });
+        console.log("Default admin created");
+    }
+}
+createDefaultAdmin();
 
 // JWT middleware
 function verifyJWT(req, res, next) {
@@ -33,9 +49,11 @@ function verifyJWT(req, res, next) {
 
     try {
         const decoded = jwt.verify(token, process.env.JWT_SECRET);
+
         if (decoded.role !== 'admin') {
             return res.status(403).json({ error: "Access denied" });
         }
+
         next();
     } catch (err) {
         return res.status(401).json({ error: "Invalid token" });
@@ -67,7 +85,7 @@ app.post('/contact', async (req, res) => {
     }
 });
 
-// Admin login route
+// ✅ Admin login
 app.post('/admin/login', async (req, res) => {
     const { password } = req.body;
 
@@ -75,7 +93,9 @@ app.post('/admin/login', async (req, res) => {
         return res.status(400).json({ error: "Password is required" });
     }
 
-    if (password !== process.env.ADMIN_PASSWORD) {
+    const admin = await Admin.findOne();
+
+    if (!admin || password !== admin.password) {
         return res.status(401).json({ error: "Invalid password" });
     }
 
@@ -101,6 +121,7 @@ app.get('/admin/messages', verifyJWT, async (req, res) => {
 // Admin delete message
 app.delete('/admin/messages/:id', verifyJWT, async (req, res) => {
     const { id } = req.params;
+
     try {
         await Message.findByIdAndDelete(id);
         res.json({ success: true, message: "Message deleted successfully" });
@@ -139,10 +160,30 @@ app.post('/admin/reply', verifyJWT, async (req, res) => {
         await Message.findByIdAndUpdate(id, { status: "Resolved" });
 
         res.json({ success: true, message: "Email sent successfully" });
+
     } catch (err) {
         console.log("❌ EMAIL ERROR:", err);
         res.status(500).json({ error: "Email send failed" });
     }
 });
 
-app.listen(process.env.PORT || 5000, () => console.log("Server running on port 5000"));
+// ✅ Change password
+app.post('/admin/change-password', verifyJWT, async (req, res) => {
+    const { oldPassword, newPassword } = req.body;
+
+    const admin = await Admin.findOne();
+
+    if (!admin || admin.password !== oldPassword) {
+        return res.status(400).json({ error: "Old password incorrect" });
+    }
+
+    admin.password = newPassword;
+    await admin.save();
+
+    res.json({ success: true, message: "Password updated successfully" });
+});
+
+// Start server
+app.listen(process.env.PORT || 5000, () => {
+    console.log("Server running on port 5000");
+});

@@ -1,0 +1,563 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>About Us - Padhaan</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="styles.css">
+    <style>
+        .about-hero {
+            padding: 8rem 0 3rem;
+            background: linear-gradient(135deg, var(--light-gray), var(--white));
+            text-align: center;
+        }
+        
+        .about-content {
+            padding: 5rem 0;
+            background: var(--white);
+        }
+        
+        .content-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 4rem;
+            align-items: center;
+            margin-bottom: 5rem;
+        }
+        
+        .content-text h2 {
+            font-size: 2.5rem;
+            color: var(--dark);
+            margin-bottom: 1.5rem;
+            line-height: 1.2;
+        }
+        
+        .content-text p {
+            font-size: 1.125rem;
+            color: var(--gray);
+            line-height: 1.8;
+            margin-bottom: 1.5rem;
+        }
+        
+        .content-image {
+            position: relative;
+        }
+        
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 2rem;
+        }
+        
+        .stat-box {
+            background: linear-gradient(135deg, var(--blue), var(--coral));
+            padding: 2rem;
+            border-radius: 1rem;
+            text-align: center;
+            color: var(--white);
+            animation: fadeInUp 0.6s ease-out;
+        }
+        
+        .stat-box:hover {
+            transform: translateY(-5px);
+            transition: var(--transition);
+        }
+        
+        .stat-box .number {
+            font-size: 3rem;
+            font-weight: 800;
+            margin-bottom: 0.5rem;
+        }
+        
+        .stat-box .label {
+            font-size: 1rem;
+            opacity: 0.95;
+        }
+        
+        .mission-vision {
+            padding: 5rem 0;
+            background: var(--light-gray);
+        }
+        
+        .mv-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 3rem;
+        }
+        
+        .mv-card {
+            background: var(--white);
+            padding: 3rem;
+            border-radius: 1.5rem;
+            box-shadow: var(--shadow-md);
+            animation: fadeInScale 0.6s ease-out;
+        }
+        
+        .mv-card:hover {
+            box-shadow: var(--shadow-lg);
+            transform: scale(1.02);
+            transition: var(--transition);
+        }
+        
+        .mv-icon {
+            width: 4rem;
+            height: 4rem;
+            background: linear-gradient(135deg, var(--coral), var(--blue));
+            border-radius: 1rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 1.5rem;
+        }
+        
+        .mv-icon svg {
+            color: var(--white);
+        }
+        
+        .mv-card h3 {
+            font-size: 1.75rem;
+            color: var(--dark);
+            margin-bottom: 1rem;
+        }
+        
+        .mv-card p {
+            font-size: 1.125rem;
+            color: var(--gray);
+            line-height: 1.8;
+        }
+        
+        .values-section {
+            padding: 5rem 0;
+            background: var(--white);
+        }
+        
+        .values-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 2rem;
+        }
+        
+        .value-card {
+            text-align: center;
+            padding: 2rem;
+            border-radius: 1rem;
+            background: var(--light-gray);
+            animation: bounceIn 0.6s ease-out;
+        }
+        
+        .value-card:hover {
+            background: var(--white);
+            box-shadow: var(--shadow-md);
+            transform: translateY(-5px);
+            transition: var(--transition);
+        }
+        
+        .value-icon {
+            width: 3.5rem;
+            height: 3.5rem;
+            background: var(--white);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 1.5rem;
+            box-shadow: var(--shadow-sm);
+        }
+        
+        .value-card h4 {
+            font-size: 1.25rem;
+            color: var(--dark);
+            margin-bottom: 0.75rem;
+        }
+        
+        .value-card p {
+            font-size: 0.95rem;
+            color: var(--gray);
+            line-height: 1.6;
+        }
+        
+        @media (max-width: 768px) {
+            .content-grid, .mv-grid {
+                grid-template-columns: 1fr;
+                gap: 2rem;
+            }
+            
+            .values-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .stats-grid {
+                grid-template-columns: 1fr;
+            }
+            }
+            .content-image {
+                 display: flex;
+                  justify-content: center;
+                 align-items: center;
+                 position: relative;
+                z-index: 1;
+            }
+/* Founder intro line */
+.founder-intro {
+    font-size: 1.6rem;
+    font-weight: 500;
+    margin: 1.5rem 0 1rem;
+    color: var(--dark);
+}
+
+/* Highlight name */
+.founder-intro span {
+    background: linear-gradient(135deg, var(--blue), var(--coral));
+    background-clip: text;
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    font-weight: 700;
+}
+/* Founder highlight card */
+.founder-highlight {
+    background: linear-gradient(135deg, rgba(99,102,241,0.12), rgba(255,115,0,0.12));
+    padding: 1.5rem;
+    border-radius: 16px;
+    margin: 1.5rem 0;
+    border-left: 4px solid var(--blue);
+    transition: transform 0.3s ease;
+}
+
+.founder-highlight:hover {
+    transform: translateY(-3px);
+}
+
+/* "Hi I'm Manya" styling */
+.founder-highlight h3 {
+    font-size: 1.4rem;
+    margin-bottom: 0.5rem;
+    color: var(--dark);
+    font-weight: 600;
+}
+
+/* Paragraph inside highlight */
+.founder-highlight p {
+    margin: 0;
+    font-size: 1rem;
+    line-height: 1.6;
+}
+
+/* Glow effect */
+.content-image::before {
+    content: "";
+    position: absolute;
+    width: 320px;
+    height: 320px;
+    background: linear-gradient(135deg, var(--blue), var(--coral));
+    filter: blur(90px);
+    opacity: 0.5;
+    z-index: -1;
+}
+
+/* Founder image */
+.content-image img {
+    width: 100%;
+    max-width: 350px;
+    border-radius: 20px;
+    box-shadow: 0 25px 50px rgba(148, 65, 65, 0.2);
+    transition: transform 0.3s ease;
+    position: relative;
+    z-index: 2;
+}
+
+.content-image img:hover {
+    transform: scale(1.03);
+}
+
+/* Founder text background */
+.content-text {
+    background: linear-gradient(135deg, rgba(99,102,241,0.08), rgba(255,115,0,0.08));
+    padding: 2rem;
+    border-radius: 20px;
+}
+    </style>
+</head>
+<body>
+    <!-- Navbar -->
+     <nav id="navbar" class="navbar">
+        <div class="container">
+            <div class="navbar-content">
+                <a href="index.html" class="logo">
+                    <div class="logo-icon">
+                        <!-- ✅ Logo Image (SVG replaced) -->
+                        <img src="images/main-logo.png" alt="Padhaan Logo" class="logo-img">
+                    </div>
+                    <span class="logo-text">Padhaan</span>
+                </a>
+
+                <div class="nav-links">
+                    <a href="index.html" class="nav-link">Home</a>
+                    <a href="scholarships.html" class="nav-link">Scholarships</a>
+                    <a href="about.html" class="nav-link active">About</a>
+                    <a href="contact.html" class="nav-link">Contact</a>
+                    <a href="faq.html" class="nav-link">FAQs</a>
+                    <a href="school-partner.html" class="nav-link">School Partnership</a>
+                    <a href="index.html#scholarship-form" class="btn-primary">Find Scholarships</a>
+                </div>
+
+                <!-- Mobile Menu Button -->
+                <button class="mobile-menu-btn" id="mobile-menu-btn">
+                    <span class="hamburger"></span>
+                </button>
+            </div>
+
+            <div class="mobile-menu" id="mobile-menu">
+                <a href="index.html" class="mobile-nav-link">Home</a>
+                <a href="scholarships.html" class="mobile-nav-link">Scholarships</a>
+                <a href="about.html" class="mobile-nav-link">About</a>
+                <a href="contact.html" class="mobile-nav-link">Contact</a>
+                <a href="faq.html" class="mobile-nav-link">FAQs</a>
+                <a href="school-partner.html" class="mobile-nav-link">School Partnership</a>
+                <a href="index.html#scholarship-form" class="btn-primary">Find Scholarships</a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero -->
+    <section class="about-hero">
+        <div class="container">
+            <span class="section-badge badge-coral">About Padhaan</span>
+            <h1 class="section-title">Empowering Students Through Education</h1>
+            <p class="section-description" style="max-width: 700px; margin: 1.5rem auto 0;">
+                Padhaan = Padhaai + Udaan. We're on a mission to make quality education accessible to every student through scholarships.
+            </p>
+        </div>
+    </section>
+
+    <!-- About Content -->
+<section class="about-content">
+    <div class="container">
+        <div class="content-grid">
+
+            <!-- LEFT SIDE (TEXT) -->
+         <div class="content-text">
+    <h2>Our Founder</h2>
+    
+    <p>
+        Our founder started Padhaan with a simple yet powerful vision — to make education accessible for every student, 
+        regardless of their financial background.
+    </p>
+
+    <!-- Stylish intro line -->
+    <p class="founder-intro">
+        Hi, I’m <span>Manya</span> 👋
+    </p>
+
+    <p>
+        I founded <strong>Padhaan</strong>, an initiative dedicated to helping students discover and access scholarships. 
+        I run workshops, collect resources, and am now building a platform to make scholarship information accessible to everyone.
+    </p>
+
+    <p>
+        Beyond Padhaan, I’m passionate about economics, psychology, and understanding how informal systems work in daily life. 
+        I explore these interests through photojournalism and small research projects, documenting stories that often go unnoticed.
+    </p>
+</div>
+            <!-- RIGHT SIDE (FOUNDER IMAGE) -->
+            <div class="content-image">
+                <img src="images/Padhan-founder.jpeg" alt="Founder" 
+                     style="width: 100%; max-width: 350px; border-radius: 20px; box-shadow: 0 10px 30px rgba(0,0,0,0.1);">
+            </div>
+
+        </div>
+    </div>
+</section>
+
+    <!-- Mission & Vision -->
+    <section class="mission-vision">
+        <div class="container">
+            <div class="section-header">
+                <span class="section-badge badge-blue">Our Purpose</span>
+                <h2 class="section-title">Mission & Vision</h2>
+            </div>
+
+            <div class="mv-grid">
+                <div class="mv-card">
+                    <div class="mv-icon">
+                        <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <circle cx="12" cy="12" r="10"></circle>
+                            <polyline points="12 6 12 12 16 14"></polyline>
+                        </svg>
+                    </div>
+                    <h3>Our Mission</h3>
+                    <p>
+                        To democratize access to educational funding by creating a comprehensive, user-friendly platform 
+                        that connects students with scholarship opportunities. We strive to eliminate financial barriers 
+                        and empower every student to pursue their educational dreams.
+                    </p>
+                </div>
+
+                <div class="mv-card">
+                    <div class="mv-icon">
+                        <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+                            <circle cx="12" cy="12" r="3"></circle>
+                        </svg>
+                    </div>
+                    <h3>Our Vision</h3>
+                    <p>
+                        To become India's most trusted scholarship discovery platform, where every deserving student 
+                        can find financial support for their education. We envision a future where financial constraints 
+                        never limit a student's potential.
+                    </p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Values -->
+    <section class="values-section">
+        <div class="container">
+            <div class="section-header">
+                <span class="section-badge badge-green">Core Values</span>
+                <h2 class="section-title">What We Stand For</h2>
+            </div>
+
+            <div class="values-grid">
+                <div class="value-card" style="animation-delay: 0.1s;">
+                    <div class="value-icon">
+                        <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#FF6B6B" stroke-width="2">
+                            <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path>
+                        </svg>
+                    </div>
+                    <h4>Student-First</h4>
+                    <p>Every decision we make prioritizes the needs and success of our students</p>
+                </div>
+
+                <div class="value-card" style="animation-delay: 0.2s;">
+                    <div class="value-icon">
+                        <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#4D96FF" stroke-width="2">
+                            <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path>
+                        </svg>
+                    </div>
+                    <h4>Integrity</h4>
+                    <p>We maintain transparency and honesty in all our operations and communications</p>
+                </div>
+
+                <div class="value-card" style="animation-delay: 0.3s;">
+                    <div class="value-icon">
+                        <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#6BCB77" stroke-width="2">
+                            <circle cx="12" cy="12" r="10"></circle>
+                            <path d="M8 14s1.5 2 4 2 4-2 4-2"></path>
+                            <line x1="9" y1="9" x2="9.01" y2="9"></line>
+                            <line x1="15" y1="9" x2="15.01" y2="9"></line>
+                        </svg>
+                    </div>
+                    <h4>Accessibility</h4>
+                    <p>We ensure our platform is easy to use and available to students everywhere</p>
+                </div>
+
+                <div class="value-card" style="animation-delay: 0.4s;">
+                    <div class="value-icon">
+                        <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#FF6B6B" stroke-width="2">
+                            <polyline points="22 12 18 12 15 21 9 3 6 12 2 12"></polyline>
+                        </svg>
+                    </div>
+                    <h4>Innovation</h4>
+                    <p>We continuously improve our technology to better serve students</p>
+                </div>
+
+                <div class="value-card" style="animation-delay: 0.5s;">
+                    <div class="value-icon">
+                        <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#4D96FF" stroke-width="2">
+                            <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
+                            <circle cx="9" cy="7" r="4"></circle>
+                            <path d="M23 21v-2a4 4 0 0 0-3-3.87"></path>
+                            <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
+                        </svg>
+                    </div>
+                    <h4>Community</h4>
+                    <p>We build a supportive community of students, educators, and mentors</p>
+                </div>
+
+                <div class="value-card" style="animation-delay: 0.6s;">
+                    <div class="value-icon">
+                        <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#6BCB77" stroke-width="2">
+                            <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path>
+                            <polyline points="22 4 12 14.01 9 11.01"></polyline>
+                        </svg>
+                    </div>
+                    <h4>Excellence</h4>
+                    <p>We strive for the highest quality in everything we deliver to students</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-brand">
+                    <a href="index.html" class="logo">
+                    <div class="logo-icon">
+                        <!-- ✅ Logo Image (SVG replaced) -->
+                        <img src="images/main-logo.png" alt="Padhaan Logo" class="logo-img">
+                    </div>
+                    <span class="logo-text">Padhaan</span>
+                </a>
+                    <p class="footer-description">
+                        Empowering students with the right scholarship opportunities. Padhaan = Padhaai + Udaan
+                    </p>
+                </div>
+
+                <div class="footer-links">
+                    <div class="footer-column">
+                        <h4 class="footer-title">Quick Links</h4>
+                        <a href="index.html" class="footer-link">Home</a>
+                        <a href="scholarships.html" class="footer-link">Scholarships</a>
+                        <a href="about.html" class="footer-link">About Us</a>
+                        <a href="contact.html" class="footer-link">Contact</a>
+                        <a href="school-partner.html" class="footer-link">School Partnership</a>
+                    </div>
+
+                    <div class="footer-column">
+                        <h4 class="footer-title">Resources</h4>
+                        <a href="#" class="footer-link">How It Works</a>
+                        <a href="faq.html" class="footer-link">FAQs</a>
+                        
+                    </div>
+
+                    <div class="footer-column">
+                        <h4 class="footer-title">Legal</h4>
+                        <a href="privacy.html" class="footer-link">Privacy Policy</a>
+                        <a href="terms.html" class="footer-link">Terms of Service</a>
+                    </div>
+                </div>
+            </div>
+
+            <div class="footer-bottom">
+                <p>&copy; 2026 Padhaan. All rights reserved.</p>
+                <div class="footer-social">
+                    <a href="#" class="social-link">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+                            <path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/>
+                        </svg>
+                    </a>
+                    <a href="#" class="social-link">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+                            <path d="M23.953 4.57a10 10 0 01-2.825.775 4.958 4.958 0 002.163-2.723c-.951.555-2.005.959-3.127 1.184a4.92 4.92 0 00-8.384 4.482C7.69 8.095 4.067 6.13 1.64 3.162a4.822 4.822 0 00-.666 2.475c0 1.71.87 3.213 2.188 4.096a4.904 4.904 0 01-2.228-.616v.06a4.923 4.923 0 003.946 4.827 4.996 4.996 0 01-2.212.085 4.936 4.936 0 004.604 3.417 9.867 9.867 0 01-6.102 2.105c-.39 0-.779-.023-1.17-.067a13.995 13.995 0 007.557 2.209c9.053 0 13.998-7.496 13.998-13.985 0-.21 0-.42-.015-.63A9.935 9.935 0 0024 4.59z"/>
+                        </svg>
+                    </a>
+                    <a href="#" class="social-link">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+                            <path d="M12 0C8.74 0 8.333.015 7.053.072 5.775.132 4.905.333 4.14.63c-.789.306-1.459.717-2.126 1.384S.935 3.35.63 4.14C.333 4.905.131 5.775.072 7.053.012 8.333 0 8.74 0 12s.015 3.667.072 4.947c.06 1.277.261 2.148.558 2.913.306.788.717 1.459 1.384 2.126.667.666 1.336 1.079 2.126 1.384.766.296 1.636.499 2.913.558C8.333 23.988 8.74 24 12 24s3.667-.015 4.947-.072c1.277-.06 2.148-.262 2.913-.558.788-.306 1.459-.718 2.126-1.384.666-.667 1.079-1.335 1.384-2.126.296-.765.499-1.636.558-2.913.06-1.28.072-1.687.072-4.947s-.015-3.667-.072-4.947c-.06-1.277-.262-2.149-.558-2.913-.306-.789-.718-1.459-1.384-2.126C21.319 1.347 20.651.935 19.86.63c-.765-.297-1.636-.499-2.913-.558C15.667.012 15.26 0 12 0zm0 2.16c3.203 0 3.585.016 4.85.071 1.17.055 1.805.249 2.227.415.562.217.96.477 1.382.896.419.42.679.819.896 1.381.164.422.36 1.057.413 2.227.057 1.266.07 1.646.07 4.85s-.015 3.585-.074 4.85c-.061 1.17-.256 1.805-.421 2.227-.224.562-.479.96-.899 1.382-.419.419-.824.679-1.38.896-.42.164-1.065.36-2.235.413-1.274.057-1.649.07-4.859.07-3.211 0-3.586-.015-4.859-.074-1.171-.061-1.816-.256-2.236-.421-.569-.224-.96-.479-1.379-.899-.421-.419-.69-.824-.9-1.38-.165-.42-.359-1.065-.42-2.235-.045-1.26-.061-1.649-.061-4.844 0-3.196.016-3.586.061-4.861.061-1.17.255-1.814.42-2.234.21-.57.479-.96.9-1.381.419-.419.81-.689 1.379-.898.42-.166 1.051-.361 2.221-.421 1.275-.045 1.65-.06 4.859-.06l.045.03zm0 3.678c-3.405 0-6.162 2.76-6.162 6.162 0 3.405 2.76 6.162 6.162 6.162 3.405 0 6.162-2.76 6.162-6.162 0-3.405-2.76-6.162-6.162-6.162zM12 16c-2.21 0-4-1.79-4-4s1.79-4 4-4 4 1.79 4 4-1.79 4-4 4zm7.846-10.405c0 .795-.646 1.44-1.44 1.44-.795 0-1.44-.646-1.44-1.44 0-.794.646-1.439 1.44-1.439.793-.001 1.44.645 1.44 1.439z"/>
+                        </svg>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <script src="data.js"></script>
+    <script src="script.js"></script>
+</body>
+</html>
