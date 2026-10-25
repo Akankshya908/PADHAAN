@@ -68,19 +68,29 @@
             <div class="container">
 
     <!-- ✅ FILTER BUTTONS -->
+     <div class="scholarship-toolbar">
+    <div class="search-bar-wrapper">
+        <input
+            type="text"
+            id="scholarship-search"
+            class="scholarship-search-input"
+            placeholder="Search scholarships by name..."
+            oninput="handleScholarshipSearch()"
+        >
+    </div>
    <div class="filter-buttons">
-    <button onclick="filterScholarships('all', this)" class="active">All</button>
-    <button onclick="filterScholarships('school', this)">School</button>
-    <button onclick="filterScholarships('class11-12', this)">Class 11-12</button>
-    <button onclick="filterScholarships('college', this)">College</button>
-    <button onclick="filterScholarships('private', this)">Private</button>
-    <button onclick="filterScholarships('state', this)">State</button>
+    <button  onclick="filterScholarshipsByGroup('all', this)"class="active">All</button>
+    <button onclick="filterScholarshipsByGroup('school', this)">School</button>
+    <button onclick="filterScholarshipsByGroup('class11-12', this)">Class 11-12</button>
+    <button onclick="filterScholarshipsByGroup('college', this)">College</button>
+    <button onclick="filterScholarshipsByGroup('private', this)">Private</button>
+    <button onclick="filterScholarshipsByGroup('state', this)">State</button>
 </div>
     <!-- Scholarships -->
     <div id="all-scholarships-container" class="scholarships-grid"></div>
 
 </div>
-            <div id="all-scholarships-container" class="scholarships-grid"></div>
+       
         </div>
     </section>
 
@@ -149,7 +159,8 @@
         </div>
     </footer>
 
-    <script src="data.js"></script>
-    <script src="script.js"></script>
+<script src="data.js"></script>
+<script src="scholarships.js"></script>
+<script src="script.js"></script>
 </body>
 </html>

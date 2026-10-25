@@ -1,5 +1,5 @@
 // Scholarship Database
-const scholarships = [
+window.scholarships = [
     {
         id: 1,
         name: "National Merit Scholarship",
@@ -7,11 +7,14 @@ const scholarships = [
         deadline: "2026-05-15",
         status: "Open",
         description: "Merit-based scholarship for students with excellent academic performance",
-        education: ["12th", "undergraduate"],
+        eligibility: {
+            classes: ["12th", "undergraduate"],
+            categories: ["general", "obc", "sc", "st"],
+            minMarks: 85,
+            maxIncome: 600000,
+            gender: []
+        },
         field: ["science", "commerce", "arts", "engineering"],
-        percentage: 85,
-        income: "0-600000",
-        category: ["general", "obc", "sc", "st"],
         group: "class11-12",
         link: "https://scholarships.gov.in",
         documents: [
@@ -29,11 +32,14 @@ const scholarships = [
         deadline: "2026-06-30",
         status: "Open",
         description: "Financial assistance for SC/ST students pursuing higher education",
-        education: ["undergraduate", "postgraduate"],
+        eligibility: {
+            classes: ["undergraduate", "postgraduate"],
+            categories: ["sc", "st"],
+            minMarks: 60,
+            maxIncome: 300000,
+            gender: []
+        },
         field: ["science", "commerce", "arts", "engineering", "medical", "law"],
-        percentage: 60,
-        income: "0-300000",
-        category: ["sc", "st"],
         group: "class11-12",
         link: "https://scholarships.gov.in",
         documents: [
@@ -51,11 +57,14 @@ const scholarships = [
         deadline: "2026-04-20",
         status: "Open",
         description: "Encouraging female students to pursue higher education in all fields",
-        education: ["12th", "undergraduate", "postgraduate"],
+        eligibility: {
+            classes: ["12th", "undergraduate", "postgraduate"],
+            categories: ["girls"],
+            minMarks: 75,
+            maxIncome: 600000,
+            gender: ["female"]
+        },
         field: ["science", "commerce", "arts", "engineering", "medical", "law"],
-        percentage: 75,
-        income: "0-600000",
-        category: ["girls"],
         group: "All",
         link: "https://scholarships.gov.in",
         documents: [
@@ -73,11 +82,14 @@ const scholarships = [
         deadline: "2026-07-15",
         status: "Open",
         description: "Scholarship for exceptional engineering students across all branches",
-        education: ["undergraduate"],
+        eligibility: {
+            classes: ["undergraduate"],
+            categories: ["general", "obc", "sc", "st"],
+            minMarks: 90,
+            maxIncome: 1000000,
+            gender: []
+        },
         field: ["engineering"],
-        percentage: 90,
-        income: "0-1000000",
-        category: ["general", "obc", "sc", "st"],
         group: "college",
         link: "https://scholarships.gov.in",
         documents: [
@@ -95,11 +107,14 @@ const scholarships = [
         deadline: "2026-08-10",
         status: "Open",
         description: "Financial aid for MBBS and BDS students from economically weaker sections",
-        education: ["undergraduate"],
+        eligibility: {
+            classes: ["undergraduate"],
+            categories: ["general", "obc", "sc", "st"],
+            minMarks: 85,
+            maxIncome: 600000,
+            gender: []
+        },
         field: ["medical"],
-        percentage: 85,
-        income: "0-600000",
-        category: ["general", "obc", "sc", "st"],
         group: "college",
         link: "https://scholarships.gov.in",
         documents: [

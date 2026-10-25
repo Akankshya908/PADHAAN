@@ -7,35 +7,47 @@ let currentFilters = {
     gender: ''
 };
 
-// Load and display all scholarships
+// Load and display all scholarships on scholarships listing page
 function loadScholarships(filters = {}) {
     const grid = document.getElementById('scholarships-grid');
-    if (!grid) return;
-    
-    let filteredScholarships = scholarships.filter(scholarship => {
+    if (!grid || !Array.isArray(scholarships)) return;
+
+    const filteredScholarships = scholarships.filter((scholarship) => {
+        const eligibility = scholarship.eligibility || {};
+
         // Filter by status
         if (filters.status && scholarship.status !== filters.status) {
             return false;
         }
-        
+
         // Filter by class
-        if (filters.class && !scholarship.eligibility.classes.includes(filters.class)) {
+        if (
+            filters.class &&
+            (!Array.isArray(eligibility.classes) || !eligibility.classes.includes(filters.class))
+        ) {
             return false;
         }
-        
+
         // Filter by category
-        if (filters.category && !scholarship.eligibility.categories.includes(filters.category)) {
+        if (
+            filters.category &&
+            (!Array.isArray(eligibility.categories) || !eligibility.categories.includes(filters.category))
+        ) {
             return false;
         }
-        
+
         // Filter by gender
-        if (filters.gender && !scholarship.eligibility.gender.includes(filters.gender)) {
+        if (
+            filters.gender &&
+            Array.isArray(eligibility.gender) &&
+            !eligibility.gender.includes(filters.gender)
+        ) {
             return false;
         }
-        
+
         return true;
     });
-    
+
     if (filteredScholarships.length === 0) {
         grid.innerHTML = `
             <div class="no-results">
@@ -54,29 +66,104 @@ function loadScholarships(filters = {}) {
         `;
         return;
     }
-    
+
     let html = '';
-    filteredScholarships.forEach(scholarship => {
+    filteredScholarships.forEach((scholarship) => {
         html += createScholarshipCardForList(scholarship);
     });
-    
+
     grid.innerHTML = html;
+}
+
+// Matching function for scholarship form
+function filterScholarships(userData) {
+    if (!Array.isArray(scholarships)) return [];
+
+    return scholarships.filter((scholarship) => {
+        const eligibility = scholarship.eligibility || {};
+
+        const scholarshipClasses = Array.isArray(eligibility.classes) ? eligibility.classes : [];
+        const scholarshipCategories = Array.isArray(eligibility.categories) ? eligibility.categories : [];
+        const scholarshipFields = Array.isArray(scholarship.field) ? scholarship.field : [];
+
+        // Education
+        if (userData.education && scholarshipClasses.length > 0) {
+            if (!scholarshipClasses.includes(userData.education)) {
+                return false;
+            }
+        }
+
+        // Category
+        if (userData.category && scholarshipCategories.length > 0) {
+            if (!scholarshipCategories.includes(userData.category)) {
+                return false;
+            }
+        }
+
+        // Percentage
+        if (
+            typeof eligibility.minMarks === 'number' &&
+            typeof userData.percentage === 'number' &&
+            userData.percentage < eligibility.minMarks
+        ) {
+            return false;
+        }
+
+        // Income
+        if (userData.income && typeof eligibility.maxIncome === 'number') {
+            const incomeParts = String(userData.income).split('-');
+            let userMaxIncome = 10000000;
+
+            if (userData.income.includes('+')) {
+                const baseValue = parseInt(userData.income.replace('+', ''), 10);
+                userMaxIncome = isNaN(baseValue) ? 10000000 : baseValue;
+            } else if (incomeParts.length > 1) {
+                const parsedMax = parseInt(incomeParts[1], 10);
+                userMaxIncome = isNaN(parsedMax) ? 10000000 : parsedMax;
+            }
+
+            if (userMaxIncome > eligibility.maxIncome) {
+                return false;
+            }
+        }
+
+        // Field
+        if (userData.field && scholarshipFields.length > 0) {
+            if (
+                !scholarshipFields.includes(userData.field) &&
+                !scholarshipFields.includes('all') &&
+                !scholarshipFields.includes('other')
+            ) {
+                return false;
+            }
+        }
+
+        return true;
+    });
 }
 
 // Create scholarship card for listing page
 function createScholarshipCardForList(scholarship) {
-    const statusClass = 
-        scholarship.status === 'Open' ? 'status-open' : 
-        scholarship.status === 'Closed' ? 'status-closed' : 
-        'status-soon';
-    
+    const statusClass =
+        scholarship.status === 'Open'
+            ? 'status-open'
+            : scholarship.status === 'Closed'
+            ? 'status-closed'
+            : 'status-soon';
+
+    const eligibility = scholarship.eligibility || {};
+    const minMarks = eligibility.minMarks ?? 'N/A';
+    const maxIncome = eligibility.maxIncome ?? 0;
+    const categories = Array.isArray(eligibility.categories) ? eligibility.categories.join(', ') : 'N/A';
+    const classes = Array.isArray(eligibility.classes) ? eligibility.classes.join(', ') : 'N/A';
+
     const eligibilityTags = [
-        `Min ${scholarship.eligibility.minMarks}% marks`,
-        `Income ≤ ₹${(scholarship.eligibility.maxIncome / 100000).toFixed(1)}L`,
-        scholarship.eligibility.categories.join(', '),
-        scholarship.eligibility.classes.join(', ')
+        `Min ${minMarks}% marks`,
+        `Income ≤ ₹${(maxIncome / 100000).toFixed(1)}L`,
+        categories,
+        classes
     ];
-    
+
     return `
         <div class="result-card">
             <div class="result-card-header">
@@ -95,7 +182,9 @@ function createScholarshipCardForList(scholarship) {
             </div>
             <div class="result-card-footer">
                 <div>
-                    <strong>${scholarship.benefits.length}</strong> benefits • <strong>${scholarship.documents.length}</strong> documents required
+                    <strong>${Array.isArray(scholarship.benefits) ? scholarship.benefits.length : 0}</strong> benefits
+                    •
+                    <strong>${Array.isArray(scholarship.documents) ? scholarship.documents.length : 0}</strong> documents required
                 </div>
                 <a href="scholarship-detail.html?id=${scholarship.id}" class="view-details-btn">View Details</a>
             </div>
@@ -106,29 +195,34 @@ function createScholarshipCardForList(scholarship) {
 // Apply filters
 function applyFilters() {
     currentFilters = {
-        status: document.getElementById('filterStatus').value,
-        class: document.getElementById('filterClass').value,
-        category: document.getElementById('filterCategory').value,
-        gender: document.getElementById('filterGender').value
+        status: document.getElementById('filterStatus')?.value || '',
+        class: document.getElementById('filterClass')?.value || '',
+        category: document.getElementById('filterCategory')?.value || '',
+        gender: document.getElementById('filterGender')?.value || ''
     };
-    
+
     loadScholarships(currentFilters);
 }
 
 // Reset filters
 function resetFilters() {
-    document.getElementById('filterStatus').value = '';
-    document.getElementById('filterClass').value = '';
-    document.getElementById('filterCategory').value = '';
-    document.getElementById('filterGender').value = '';
-    
+    const filterStatus = document.getElementById('filterStatus');
+    const filterClass = document.getElementById('filterClass');
+    const filterCategory = document.getElementById('filterCategory');
+    const filterGender = document.getElementById('filterGender');
+
+    if (filterStatus) filterStatus.value = '';
+    if (filterClass) filterClass.value = '';
+    if (filterCategory) filterCategory.value = '';
+    if (filterGender) filterGender.value = '';
+
     currentFilters = {
         status: '',
         class: '',
         category: '',
         gender: ''
     };
-    
+
     loadScholarships(currentFilters);
 }
 
@@ -139,7 +233,7 @@ function formatDate(dateString) {
     return date.toLocaleDateString('en-IN', options);
 }
 
-// Initialize on page load
+// Initialize listing page on load
 document.addEventListener('DOMContentLoaded', () => {
     loadScholarships();
 });

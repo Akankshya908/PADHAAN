@@ -309,3 +309,53 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     });
 });
+const partnershipForm = document.getElementById("partnershipForm");
+const successMessage = document.getElementById("partner-success-message");
+const submitBtn = document.getElementById("submit-btn");
+
+if (partnershipForm) {
+    partnershipForm.addEventListener("submit", async function (e) {
+        e.preventDefault();
+
+        const formData = new FormData(partnershipForm);
+        const data = Object.fromEntries(formData.entries());
+
+        // checkbox ko proper boolean me convert karo
+        data.consent = document.getElementById("consent").checked;
+
+        try {
+            submitBtn.disabled = true;
+            submitBtn.innerHTML = "<span>Submitting...</span>";
+
+            const res = await fetch("/school-partner", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify(data)
+            });
+
+            const result = await res.json();
+
+            if (res.ok) {
+                partnershipForm.reset();
+                successMessage.style.display = "flex";
+                successMessage.scrollIntoView({ behavior: "smooth" });
+            } else {
+                alert(result.error || "Failed to submit partnership request");
+            }
+        } catch (err) {
+            console.log(err);
+            alert("Server error. Please try again.");
+        } finally {
+            submitBtn.disabled = false;
+            submitBtn.innerHTML = `
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M22 2L11 13"></path>
+                    <path d="M22 2L15 22L11 13L2 9L22 2Z"></path>
+                </svg>
+                <span>Submit Partnership Request</span>
+            `;
+        }
+    });
+}
