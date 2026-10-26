@@ -809,3 +809,46 @@ window.scholarships = [
     documents: ["Marksheet", "Income Certificate"]
 }
 ];
+
+function normalizePadhaanScholarship(item) {
+    const scholarship = { ...item };
+    const eligibility = scholarship.eligibility || {};
+    const incomeText = String(scholarship.income || '');
+    const incomeMatch = incomeText.match(/(?:-|^)(\d[\d,]*)\+?$/);
+    const legacyIncome = incomeMatch ? Number(incomeMatch[1].replace(/,/g, '')) : 10000000;
+    scholarship.eligibility = {
+        classes: eligibility.classes || scholarship.education || [],
+        categories: eligibility.categories || scholarship.category || [],
+        minMarks: Number(eligibility.minMarks ?? scholarship.percentage ?? 0),
+        maxIncome: Number(eligibility.maxIncome ?? legacyIncome),
+        gender: eligibility.gender || [],
+        states: eligibility.states || scholarship.states || []
+    };
+    scholarship.documents = Array.isArray(scholarship.documents) ? scholarship.documents : [];
+    scholarship.benefits = Array.isArray(scholarship.benefits) ? scholarship.benefits : [];
+    scholarship.field = Array.isArray(scholarship.field) ? scholarship.field : [];
+    scholarship.group = scholarship.group || 'all';
+    return scholarship;
+}
+
+window.scholarships = window.scholarships.map(normalizePadhaanScholarship);
+
+window.getScholarshipById = function (id) {
+    return window.scholarships.find(scholarship => String(scholarship.id) === String(id));
+};
+
+window.scholarshipsReady = (async function () {
+    const url = window.padhaanApiUrl && window.padhaanApiUrl('/scholarships');
+    if (!url) return window.scholarships;
+
+    try {
+        const response = await window.fetch(url, { cache: 'no-store' });
+        if (!response.ok) throw new Error(`Scholarship request failed (${response.status})`);
+        const latest = await response.json();
+        if (Array.isArray(latest)) window.scholarships = latest.map(normalizePadhaanScholarship);
+    } catch (error) {
+        console.warn('Using the saved scholarship list because the live list could not be loaded.', error);
+    }
+
+    return window.scholarships;
+})();

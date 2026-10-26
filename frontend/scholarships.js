@@ -234,6 +234,7 @@ function formatDate(dateString) {
 }
 
 // Initialize listing page on load
-document.addEventListener('DOMContentLoaded', () => {
+document.addEventListener('DOMContentLoaded', async () => {
+    if (window.scholarshipsReady) await window.scholarshipsReady;
     loadScholarships();
 });

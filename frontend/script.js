@@ -84,7 +84,8 @@ function initializeAccessibilityToggle() {
     applyAccessibleTheme(isAccessibleThemeEnabled());
 }
 
-document.addEventListener('DOMContentLoaded', function () {
+document.addEventListener('DOMContentLoaded', async function () {
+    if (window.scholarshipsReady) await window.scholarshipsReady;
     initializeAccessibilityToggle();
 
     const mobileMenuBtn = document.getElementById('mobile-menu-btn');
@@ -714,7 +715,7 @@ function handleContactSubmit(event) {
         message: formData.get('message')
     };
 
-    fetch('http://localhost:5000/contact', {
+    window.padhaanApiFetch('/contact', {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json'

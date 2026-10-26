@@ -10,6 +10,9 @@ const bcrypt = require('bcrypt');
 
 const SchoolPartner = require('./models/school-partner');
 const Admin = require('./models/admin.js');
+const Scholarship = require('./models/scholarship');
+const fs = require('fs');
+const vm = require('vm');
 
 const app = express();
 
@@ -23,9 +26,108 @@ app.use(express.json());
 app.use(express.static(path.join(__dirname, '../frontend')));
 
 // MongoDB
-mongoose.connect(process.env.MONGO_URI || 'mongodb://127.0.0.1:27017/padhaanDB')
-    .then(() => console.log('MongoDB Connected'))
-    .catch(err => console.log(err));
+const databaseReady = mongoose.connect(process.env.MONGO_URI || 'mongodb://127.0.0.1:27017/padhaanDB')
+    .then(async () => {
+        console.log('MongoDB Connected');
+        await seedScholarshipsIfEmpty();
+        return true;
+    })
+    .catch(err => {
+        console.error('❌ DATABASE STARTUP ERROR:', err);
+        return false;
+    });
+
+function getDefaultScholarships() {
+    const dataPath = path.join(__dirname, '../frontend/data.js');
+    const context = { window: {} };
+    vm.runInNewContext(fs.readFileSync(dataPath, 'utf8'), context, { timeout: 1000 });
+    return Array.isArray(context.window.scholarships)
+        ? JSON.parse(JSON.stringify(context.window.scholarships))
+        : [];
+}
+
+function parseIncomeLimit(value) {
+    if (typeof value === 'number') return value;
+    const text = String(value || '').trim();
+    const match = text.match(/(?:-|^)(\d[\d,]*)\+?$/);
+    return match ? Number(match[1].replace(/,/g, '')) : 10000000;
+}
+
+function cleanScholarshipText(value) {
+    return String(value ?? '').replace(/<[^>]*>/g, '').trim();
+}
+
+function cleanScholarshipList(value) {
+    return Array.isArray(value) ? value.map(cleanScholarshipText).filter(Boolean) : [];
+}
+
+function safeScholarshipLink(value) {
+    try {
+        const url = new URL(String(value || ''));
+        return ['http:', 'https:'].includes(url.protocol) ? url.href : '';
+    } catch (_) {
+        return '';
+    }
+}
+
+function normalizeScholarship(item) {
+    const scholarship = item && typeof item.toObject === 'function' ? item.toObject() : { ...item };
+    const currentEligibility = scholarship.eligibility || {};
+    const classes = cleanScholarshipList(currentEligibility.classes || scholarship.education);
+    const categories = cleanScholarshipList(currentEligibility.categories || scholarship.category);
+    const minMarks = Number(currentEligibility.minMarks ?? scholarship.percentage ?? 0);
+    const maxIncome = Number(currentEligibility.maxIncome ?? parseIncomeLimit(scholarship.income));
+    return {
+        ...scholarship,
+        id: scholarship.id,
+        name: cleanScholarshipText(scholarship.name),
+        amount: cleanScholarshipText(scholarship.amount),
+        description: cleanScholarshipText(scholarship.description),
+        education: classes,
+        category: categories,
+        percentage: minMarks,
+        income: `0-${maxIncome}`,
+        status: ['Open', 'Soon', 'Closed'].includes(scholarship.status) ? scholarship.status : 'Open',
+        eligibility: {
+            classes,
+            categories,
+            minMarks,
+            maxIncome,
+            gender: cleanScholarshipList(currentEligibility.gender),
+            states: cleanScholarshipList(currentEligibility.states)
+        },
+        field: cleanScholarshipList(scholarship.field),
+        documents: cleanScholarshipList(scholarship.documents),
+        benefits: cleanScholarshipList(scholarship.benefits),
+        group: ['all', 'school', 'class11-12', 'college', 'private', 'state'].includes(scholarship.group)
+            ? scholarship.group
+            : 'all',
+        link: safeScholarshipLink(scholarship.link)
+    };
+}
+
+async function seedScholarshipsIfEmpty() {
+    const count = await Scholarship.countDocuments();
+    const defaults = getDefaultScholarships().map(normalizeScholarship);
+    if (count === 0 && defaults.length) {
+        await Scholarship.insertMany(defaults, { ordered: false });
+        console.log(`Loaded ${defaults.length} starter scholarships`);
+    }
+
+    // Backfill records created before the admin-managed list had stable public IDs.
+    const defaultIdsByName = new Map(defaults.map(item => [item.name, item.id]));
+    const existing = await Scholarship.find().select('_id id name').lean();
+    const usedIds = new Set(existing.map(item => item.id).filter(Number.isFinite));
+    let nextId = Math.max(0, ...usedIds);
+
+    for (const item of existing) {
+        if (Number.isFinite(item.id)) continue;
+        const expectedId = defaultIdsByName.get(item.name);
+        const id = Number.isFinite(expectedId) && !usedIds.has(expectedId) ? expectedId : ++nextId;
+        await Scholarship.updateOne({ _id: item._id }, { $set: { id } });
+        usedIds.add(id);
+    }
+}
 
 // Mail transporter
 const transporter = nodemailer.createTransport({
@@ -92,6 +194,17 @@ const messageSchema = new mongoose.Schema({
 const Message = mongoose.model('Message', messageSchema);
 
 // PUBLIC ROUTES
+
+app.get('/scholarships', async (req, res) => {
+    try {
+        if (!(await databaseReady)) return res.status(503).json({ error: 'Database is not connected' });
+        const items = await Scholarship.find().sort({ id: 1, createdAt: -1 });
+        res.json(items.map(normalizeScholarship));
+    } catch (err) {
+        console.log('❌ SCHOLARSHIP LIST ERROR:', err);
+        res.status(500).json({ error: 'Unable to load scholarships' });
+    }
+});
 
 app.post('/contact', async (req, res) => {
     const { name, email, subject, message } = req.body;
@@ -275,6 +388,79 @@ app.post('/admin/change-password', verifyJWT, async (req, res) => {
 });
 
 // ADMIN DASHBOARD ROUTES
+
+function requireSuperadmin(req, res, next) {
+    if (req.user?.role !== 'superadmin') {
+        return res.status(403).json({ error: 'Only superadmins can manage scholarships' });
+    }
+    next();
+}
+
+app.get('/admin/scholarships', verifyJWT, async (req, res) => {
+    try {
+        if (!(await databaseReady)) return res.status(503).json({ error: 'Database is not connected' });
+        const items = await Scholarship.find().sort({ id: 1, createdAt: -1 });
+        res.json(items.map(normalizeScholarship));
+    } catch (err) {
+        console.log('❌ ADMIN SCHOLARSHIP LIST ERROR:', err);
+        res.status(500).json({ error: 'Unable to load scholarships' });
+    }
+});
+
+app.post('/admin/scholarships', verifyJWT, requireSuperadmin, async (req, res) => {
+    const { name, amount, deadline, description } = req.body;
+    if (![name, amount, deadline, description].every(value => typeof value === 'string' && value.trim())) {
+        return res.status(400).json({ error: 'Name, award, deadline, and description are required' });
+    }
+
+    try {
+        if (!(await databaseReady)) return res.status(503).json({ error: 'Database is not connected' });
+        const highestId = await Scholarship.findOne().sort({ id: -1 }).select('id').lean();
+        const scholarship = new Scholarship(normalizeScholarship({ ...req.body, id: (highestId?.id || 0) + 1 }));
+        await scholarship.save();
+        res.status(201).json(normalizeScholarship(scholarship));
+    } catch (err) {
+        console.log('❌ CREATE SCHOLARSHIP ERROR:', err);
+        res.status(500).json({ error: 'Unable to create scholarship' });
+    }
+});
+
+app.put('/admin/scholarships/:id', verifyJWT, requireSuperadmin, async (req, res) => {
+    const { name, amount, deadline, description } = req.body;
+    if (![name, amount, deadline, description].every(value => typeof value === 'string' && value.trim())) {
+        return res.status(400).json({ error: 'Name, award, deadline, and description are required' });
+    }
+
+    try {
+        if (!(await databaseReady)) return res.status(503).json({ error: 'Database is not connected' });
+        const updates = normalizeScholarship(req.body);
+        delete updates._id;
+        delete updates.id;
+        delete updates.createdAt;
+        delete updates.updatedAt;
+        const updated = await Scholarship.findByIdAndUpdate(req.params.id, updates, {
+            returnDocument: 'after',
+            runValidators: true
+        });
+        if (!updated) return res.status(404).json({ error: 'Scholarship not found' });
+        res.json(normalizeScholarship(updated));
+    } catch (err) {
+        console.log('❌ UPDATE SCHOLARSHIP ERROR:', err);
+        res.status(500).json({ error: 'Unable to update scholarship' });
+    }
+});
+
+app.delete('/admin/scholarships/:id', verifyJWT, requireSuperadmin, async (req, res) => {
+    try {
+        if (!(await databaseReady)) return res.status(503).json({ error: 'Database is not connected' });
+        const removed = await Scholarship.findByIdAndDelete(req.params.id);
+        if (!removed) return res.status(404).json({ error: 'Scholarship not found' });
+        res.json({ success: true });
+    } catch (err) {
+        console.log('❌ DELETE SCHOLARSHIP ERROR:', err);
+        res.status(500).json({ error: 'Unable to delete scholarship' });
+    }
+});
 
 app.get('/admin/messages', verifyJWT, async (req, res) => {
     try {

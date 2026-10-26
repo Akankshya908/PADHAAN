@@ -1,6 +1,7 @@
 // Scholarship Detail Page JavaScript
 
-function loadScholarshipDetail() {
+async function loadScholarshipDetail() {
+    if (window.scholarshipsReady) await window.scholarshipsReady;
     // Get scholarship ID from URL
     const urlParams = new URLSearchParams(window.location.search);
     const scholarshipId = urlParams.get('id');
@@ -44,6 +45,17 @@ function loadScholarshipDetail() {
         `;
         return;
     }
+
+    const eligibility = scholarship.eligibility || {};
+    const documents = Array.isArray(scholarship.documents) ? scholarship.documents : [];
+    const benefits = Array.isArray(scholarship.benefits) ? scholarship.benefits : [];
+    let officialLink = '';
+    try {
+        const parsedLink = new URL(scholarship.link);
+        if (parsedLink.protocol === 'https:' || parsedLink.protocol === 'http:') officialLink = parsedLink.href;
+    } catch (_) {
+        officialLink = '';
+    }
     
     // Update page title
     document.title = `${scholarship.name} - Padhaan`;
@@ -86,33 +98,33 @@ function loadScholarshipDetail() {
             <div class="eligibility-grid">
                 <div class="eligibility-item">
                     <div class="eligibility-label">Minimum Marks</div>
-                    <div class="eligibility-value">${scholarship.eligibility.minMarks}%</div>
+                    <div class="eligibility-value">${eligibility.minMarks ?? 'Not specified'}${eligibility.minMarks !== undefined ? '%' : ''}</div>
                 </div>
                 <div class="eligibility-item">
                     <div class="eligibility-label">Maximum Family Income</div>
-                    <div class="eligibility-value">₹${scholarship.eligibility.maxIncome.toLocaleString()}</div>
+                    <div class="eligibility-value">${eligibility.maxIncome !== undefined ? `₹${Number(eligibility.maxIncome).toLocaleString('en-IN')}` : 'Not specified'}</div>
                 </div>
                 <div class="eligibility-item">
                     <div class="eligibility-label">Eligible Categories</div>
-                    <div class="eligibility-value">${scholarship.eligibility.categories.join(', ')}</div>
+                    <div class="eligibility-value">${(eligibility.categories || []).join(', ') || 'All categories'}</div>
                 </div>
                 <div class="eligibility-item">
                     <div class="eligibility-label">Gender</div>
-                    <div class="eligibility-value">${scholarship.eligibility.gender.join(', ')}</div>
+                    <div class="eligibility-value">${(eligibility.gender || []).join(', ') || 'All genders'}</div>
                 </div>
                 <div class="eligibility-item">
                     <div class="eligibility-label">States</div>
-                    <div class="eligibility-value">${scholarship.eligibility.states.join(', ')}</div>
+                    <div class="eligibility-value">${(eligibility.states || []).join(', ') || 'All India'}</div>
                 </div>
                 <div class="eligibility-item">
                     <div class="eligibility-label">Class/Course</div>
-                    <div class="eligibility-value">${scholarship.eligibility.classes.join(', ')}</div>
+                    <div class="eligibility-value">${(eligibility.classes || []).join(', ') || 'Not specified'}</div>
                 </div>
             </div>
             
             <h3 class="detail-section-title">Required Documents</h3>
             <ul class="documents-list">
-                ${scholarship.documents.map(doc => `
+                ${documents.map(doc => `
                     <li>
                         <div class="doc-icon"></div>
                         <span>${doc}</span>
@@ -122,7 +134,7 @@ function loadScholarshipDetail() {
             
             <h3 class="detail-section-title">Benefits</h3>
             <ul class="benefits-list">
-                ${scholarship.benefits.map(benefit => `
+                ${benefits.map(benefit => `
                     <li>
                         <div class="check-icon"></div>
                         <span>${benefit}</span>
@@ -137,9 +149,9 @@ function loadScholarshipDetail() {
                 <p class="apply-text">
                     Make sure you have all the required documents ready before starting your application.
                 </p>
-                <button onclick="alert('Application feature coming soon! This is a demo.')" class="apply-btn">
-                    Apply for this Scholarship
-                </button>
+                ${officialLink
+                    ? `<a href="${officialLink}" target="_blank" rel="noopener noreferrer" class="apply-btn">Apply on the official website</a>`
+                    : `<button onclick="alert('Application details are not available yet. Please check back soon.')" class="apply-btn">Application details coming soon</button>`}
             </div>
         ` : ''}
     `;
