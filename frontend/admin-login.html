@@ -721,7 +721,9 @@
                 }
             } catch (err) {
                 console.log(err);
-                showError("Server error");
+                showError(err.message.includes("backend URL is not configured")
+                    ? "Login is unavailable: the Padhaan backend has not been connected to this website yet."
+                    : "Could not reach the Padhaan server. Please try again later.");
             } finally {
                 loginBtn.disabled = false;
                 loginBtn.textContent = "Login";
@@ -757,7 +759,9 @@
                 }
             } catch (err) {
                 console.log(err);
-                showError("Server error");
+                showError(err.message.includes("backend URL is not configured")
+                    ? "Password reset is unavailable until the Padhaan backend is connected."
+                    : "Could not reach the Padhaan server. Please try again later.");
             }
         });
     </script>

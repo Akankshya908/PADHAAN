@@ -16,6 +16,11 @@ const vm = require('vm');
 
 const app = express();
 
+// Basic liveness endpoint for hosted backend health checks.
+app.get('/health', (_req, res) => {
+    res.json({ status: 'ok' });
+});
+
 // Middleware
 app.use(cors({
     origin: '*',
@@ -138,13 +143,18 @@ const transporter = nodemailer.createTransport({
     }
 });
 
-// Create default admin
+// Create the first admin only when an explicit password is configured.
 async function createDefaultAdmin() {
     try {
+        if (!process.env.ADMIN_PASSWORD) {
+            console.log('Skipping initial admin creation: ADMIN_PASSWORD is not configured');
+            return;
+        }
+
         const existing = await Admin.findOne({ email: 'padhaan.org@gmail.com' });
 
         if (!existing) {
-            const hashedPassword = await bcrypt.hash(process.env.ADMIN_PASSWORD || 'admin123', 10);
+            const hashedPassword = await bcrypt.hash(process.env.ADMIN_PASSWORD, 10);
 
             await Admin.create({
                 email: 'padhaan.org@gmail.com',
